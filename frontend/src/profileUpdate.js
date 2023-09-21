@@ -1,4 +1,4 @@
-import './App.css';
+import "./App.css";
 import { useState, useEffect } from 'react';
 import axios from 'axios';
 import React from 'react';
@@ -16,7 +16,7 @@ function ProfileUpdate() {
   const [ischanged, setischanged] = useState(false);
   const [changedData, setChangedData] = useState({
     id: '',
-    firstname: '',
+    firstname:"",
     secondname: '',
     email: '',
     phone: '',
@@ -58,11 +58,10 @@ function ProfileUpdate() {
   const handleSubmit = async () => {
     try {
       const update =()=>{axios.put('http://localhost:3008/editdata', changedData);
-      alert('Profile updated successfully');} 
+      alert('Profile updated successfully');}
 
-//validate email 
       function validateEmail(email) {
-        var emailPattern = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.com$/;
+        var emailPattern = /^[a-zA-Z0-9.-_]+@[a-zA-Z0-9.-_]+\.com$/;
         return emailPattern.test(email);
       }
 
@@ -70,18 +69,19 @@ function ProfileUpdate() {
         var phonePattern = /^\d{10}$/;
         return phonePattern.test(phone);
       }
-  
+
 //validate phone number
       if (!validatePhone(changedData.phone)) {
         alert("invalid Phone number");
        }
+//validate email
       if (!validateEmail(changedData.email)) {
         alert("invalid email");
       }
       if(validatePhone(changedData.phone)&&validateEmail(changedData.email)){
         update();
       }
-      
+
     } catch (error) {
       console.error('Error updating profile data:', error);
     }
@@ -99,9 +99,7 @@ function ProfileUpdate() {
     navigate('/account');
   };
 
-  
-
-// aws upload
+// image upload
   const [selectedFile, setSelectedFile] = useState();
  // Function to upload the selected image to AWS S3
   const uploadImage = async () => {
@@ -114,26 +112,25 @@ const formData = new FormData();
 formData.append('photos', selectedFile);
 
 try {
-  await axios.post('http://localhost:3008/up', formData, {
+  await axios.post('http://localhost:3008/upload', formData, {
     headers: {
       'Content-Type': 'multipart/form-data',
     },
   });
-  alert('Image uploaded successfully');
 } catch (error) {
-  console.error('Error uploading image:', error);
-  alert('Image upload failed');
+  console.error("Error uploading image:", error);
+  alert("Image upload failed");
 }
-await axios.get(`http://localhost:3008/url/${selectedFile.name}`);
+await axios.get(`http://localhost:3008/url/${selectedFile.name}/${changedData.id}`);
 setischanged(!ischanged);
+alert("Image uploaded successfully");
 };
 
  // Function to handle file selection
   const handleFileChange = (e) => {
     setSelectedFile(e.target.files[0]);
   };
- 
-  
+
   return (
     <div>
       <div className='topbar'>

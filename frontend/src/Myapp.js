@@ -1,7 +1,7 @@
 import React from 'react';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
-import ProfileUpdate from './profileUpdate'; 
-import Passwordupdate from './passwordupdate'; 
+import ProfileUpdate from './profileUpdate';
+import Passwordupdate from './passwordupdate';
 
 function MyApp() {
   return (

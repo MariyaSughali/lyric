@@ -15,11 +15,9 @@ function Passwordupdate(){
   const[passwords,setPasswords]=useState({
     oldPassword:'',
     newPassword:'',
-    confirmPassword: '', 
-  })  
-  
-  // Validate password for the required pattern
-  
+    confirmPassword: '',
+  })
+
   const handlePasswordUpdate = async () => {
     // Check if newPassword and confirmPassword match
     if (passwords.newPassword !== passwords.confirmPassword) {
@@ -40,7 +38,8 @@ function Passwordupdate(){
       // Send a PUT request to update the password
       await axios.put('http://localhost:3008/changepassword', {
         oldPassword:passwords.oldPassword,
-        newPassword: passwords.newPassword, 
+        newPassword: passwords.newPassword,
+        id: changedData.id,
       });
       alert('Password updated successfully');
       setPasswords({ oldPassword:'',
@@ -52,8 +51,6 @@ function Passwordupdate(){
       alert('Invalid old password');
     }
   };
-  
-  
 
   const handlecancel= async()=>{
     try{
@@ -63,13 +60,13 @@ function Passwordupdate(){
     }catch{
       console.log("not cancelled")
     }
-    
   }
 
-  // aws upload
+  // image upload
   const [ischanged, setischanged] = useState(false);
   const [selectedFile, setSelectedFile] = useState();
   const [changedData, setChangedData] = useState({
+    id:'',
     image: '',
   });
 
@@ -79,6 +76,7 @@ function Passwordupdate(){
         if (response.data && response.data.length > 0) {
           const userData = response.data[0];
           setChangedData({
+            id:userData.id,
             image: userData.image,
           });
         }
@@ -88,8 +86,7 @@ function Passwordupdate(){
       });
   }, [ischanged]);
 
-// Function to upload the selected image to AWS S3
-   const uploadImage = async () => {
+const uploadImage = async () => {
     if (!selectedFile) {
       alert('Please select an image to upload');
       return;
@@ -97,9 +94,9 @@ function Passwordupdate(){
 // Create a FormData object to send the image file
 const formData = new FormData();
 formData.append('photos', selectedFile);
-
+//upload image to aws bucket
 try {
-  await axios.post('http://localhost:3008/up', formData, {
+  await axios.post('http://localhost:3008/upload', formData, {
     headers: {
       'Content-Type': 'multipart/form-data',
     },
@@ -109,8 +106,8 @@ try {
   console.error('Error uploading image:', error);
   alert('Image upload failed');
 }
-
-await axios.get(`http://localhost:3008/url/${selectedFile.name}`);
+//to get the url from bucket and store in database
+await axios.get(`http://localhost:3008/url/${selectedFile.name}/${changedData.id}`);
 setischanged(!ischanged);
 
 };
@@ -119,12 +116,11 @@ setischanged(!ischanged);
   const handleFileChange = (e) => {
     setSelectedFile(e.target.files[0]);
   };
-  
+
   return (
     <div>
         <div className='topbar'>
-        <h1><span class="material-symbols-outlined">arrow_back</span>Profile</h1>
-
+        <div className='head'> <span class="material-symbols-outlined">arrow_back</span><p>Profile</p></div>
         </div>
     <div className='navi'>
     <label htmlFor="fileInput" className="label">
@@ -154,7 +150,7 @@ setischanged(!ischanged);
 
         <div className='form-row'> 
         <label htmlfor="newpassword">New Password</label>
-        <input  type="text" name="newpassword" id="newpassword"  value={passwords.newPassword}
+        <input  type="password" name="newpassword" id="newpassword"  value={passwords.newPassword}
                 onChange={(e) =>setPasswords({ ...passwords, newPassword: e.target.value })} /><br />
         </div>
 
@@ -164,7 +160,7 @@ setischanged(!ischanged);
         <div className='margin'>
         <div className='form-row'> 
         <label htmlfor="confirmpassword">Confirm Password </label>
-        <input  type="text" name='confirmpassword' id='confirmpassword' value={passwords.confirmPassword}
+        <input  type="password" name='confirmpassword' id='confirmpassword' value={passwords.confirmPassword}
                   onChange={(e) => setPasswords({...passwords,confirmPassword: e.target.value,})}/><br></br>
         </div>
         </div>

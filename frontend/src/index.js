@@ -1,7 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import MyApp from './Myapp';
-//import ProfileUpdate from './profileUpdate';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(

@@ -19,7 +19,7 @@
 .divide{
   columns: 2;
 }
-input[type="text"],input[type="email"]
+input[type="text"],input[type="email"],input[type="password"]
 {
   background-color: transparent;
   margin-bottom: 25px;
