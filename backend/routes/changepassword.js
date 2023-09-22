@@ -20,4 +20,4 @@ router.put('/changepassword', async function(req, res){
   res.status(result.status).json({ message: result.message });
 });
 
-export default router;
+module.exports = router;
